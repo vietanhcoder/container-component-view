@@ -1,26 +1,33 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { lazy, Suspense, memo, useEffect } from 'react';
+import { Route, Switch, HashRouter } from 'react-router-dom';
 
-function App() {
+import db from './firebase';
+
+const Layout = lazy(() => import('./containers/Layout'));
+const Login = lazy(() => import('./modules/Login/containers/Login'));
+
+const App = () => {
+  useEffect(() => {
+    db.collection('gurus')
+      .get()
+      .then((querySnapshot) => {
+        const data = querySnapshot.docs.map((doc) => doc.data());
+        console.log(data); // array of cities objects
+      });
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <HashRouter>
+      <Suspense fallback={<div />}>
+        <Switch>
+          <Route exact path="/login" name="Login Page" render={(props) => <Login {...props} />} />
+          <Route path="/" name="Home" render={(props) => <Layout {...props} />} />
+        </Switch>
+      </Suspense>
+    </HashRouter>
   );
-}
+};
 
-export default App;
+export default memo(App);
+
+// https://medium.com/technest/how-to-connect-firebase-cloud-firestore-to-your-react-app-1118fd182c60
