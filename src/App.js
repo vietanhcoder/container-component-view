@@ -2,7 +2,6 @@ import React, { lazy, Suspense, memo, useEffect } from 'react';
 import { Route, Switch, HashRouter } from 'react-router-dom';
 
 import db from './firebase';
-
 const Layout = lazy(() => import('./containers/Layout'));
 const Login = lazy(() => import('./modules/Login/containers/Login'));
 
